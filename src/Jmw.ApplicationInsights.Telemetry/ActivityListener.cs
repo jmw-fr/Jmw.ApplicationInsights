@@ -16,7 +16,7 @@ namespace Jmw.ApplicationInsights.Telemetry
     /// .Net listener mapping an activity to an Application Insights Telemetry.
     /// </summary>
     /// <typeparam name="TTelemetry">Type of Application Insight Telemetry.</typeparam>
-    public class ActivityListener<TTelemetry> : IDisposable
+    public class ActivityListener<TTelemetry> : IActivityListener, IDisposable
         where TTelemetry : OperationTelemetry, new()
     {
         private readonly TelemetryClient telemetryClient;
@@ -33,7 +33,8 @@ namespace Jmw.ApplicationInsights.Telemetry
 
             this.ActivitySourceListener = new ActivityListener()
             {
-                ActivityStopped = activity => this.OnActivityStopped(activity),
+                ActivityStarted = this.ActivityStarted,
+                ActivityStopped = this.ActivityStopped,
                 ShouldListenTo = activityFilter,
                 SampleUsingParentId = (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData,
                 Sample = (ref ActivityCreationOptions<ActivityContext> options) => ActivitySamplingResult.AllData,
@@ -104,11 +105,17 @@ namespace Jmw.ApplicationInsights.Telemetry
             return telemetry;
         }
 
-        private void OnActivityStopped(Activity activity)
+        private void ActivityStarted(Activity activity)
+        {
+        }
+
+        private void ActivityStopped(Activity activity)
         {
             if (this.telemetryClient.IsEnabled())
             {
                 var telemetry = ActivityToTelemetry(activity);
+
+                this.EnrichTelemetry(telemetry, activity);
 
                 if (telemetry is DependencyTelemetry)
                 {

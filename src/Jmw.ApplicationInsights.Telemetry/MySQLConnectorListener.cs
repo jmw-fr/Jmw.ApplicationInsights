@@ -17,7 +17,7 @@ namespace Jmw.ApplicationInsights.Telemetry
         /// <summary>
         /// MySQLConnector Actity Name.
         /// </summary>
-        public const string ActivityName = "MySQLConnector";
+        public const string ActivityName = "MySqlConnector";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MySQLConnectorListener"/> class.
