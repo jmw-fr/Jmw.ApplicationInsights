@@ -72,7 +72,7 @@ namespace Jmw.ApplicationInsights.Telemetry
 
             if (this.listenerOptions != null)
             {
-                if (this.listenerOptions.IgnoreDatabases != null
+                if (this.listenerOptions.MonitorDatabases != null
                     && this.listenerOptions.MonitorDatabases.Length > 0
                     && !this.listenerOptions.MonitorDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
                 {
