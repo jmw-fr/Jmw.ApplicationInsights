@@ -70,11 +70,20 @@ namespace Jmw.ApplicationInsights.Telemetry
             telemetry.Target = $"mysql:{dbServer},{dbServerPort} | {dbName}";
             telemetry.Data = command;
 
-            if (this.listenerOptions != null
-                && this.listenerOptions.IgnoreDatabases != null
-                && this.listenerOptions.IgnoreDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
+            if (this.listenerOptions != null)
             {
-                return false;
+                if (this.listenerOptions.IgnoreDatabases != null
+                    && this.listenerOptions.MonitorDatabases.Length > 0
+                    && !this.listenerOptions.MonitorDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                if (this.listenerOptions.IgnoreDatabases != null
+                    && this.listenerOptions.IgnoreDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
             }
 
             return base.ProcessTelemetry(telemetry, sourceActivity);

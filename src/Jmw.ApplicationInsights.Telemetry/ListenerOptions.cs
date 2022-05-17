@@ -10,6 +10,12 @@ namespace Jmw.ApplicationInsights.Telemetry
     public class ListenerOptions
     {
         /// <summary>
+        /// Gets or sets the list of databases to monitor with databases listeners.
+        /// If <c>null</c> or empty, monitors all databases.
+        /// </summary>
+        public string[] MonitorDatabases { get; set; }
+
+        /// <summary>
         /// Gets or sets the list of databases to ignore for databases listeners.
         /// </summary>
         public string[] IgnoreDatabases { get; set; }
