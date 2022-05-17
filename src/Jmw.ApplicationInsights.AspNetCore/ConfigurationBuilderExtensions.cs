@@ -1,5 +1,5 @@
 ﻿// <copyright file="ConfigurationBuilderExtensions.cs" company="Jean-Marc Weeger">
-// Copyright My Company under MIT Licence. See https://opensource.org/licenses/mit-license.php.
+// Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
 namespace Microsoft.AspNetCore.Builder
@@ -7,6 +7,7 @@ namespace Microsoft.AspNetCore.Builder
     using System.Diagnostics;
     using Dawn;
     using Jmw.ApplicationInsights.Telemetry;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>

@@ -1,13 +1,15 @@
 ﻿// <copyright file="MySQLConnectorListener.cs" company="Jean-Marc Weeger">
-// Copyright My Company under MIT Licence. See https://opensource.org/licenses/mit-license.php.
+// Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
 namespace Jmw.ApplicationInsights.Telemetry
 {
     using System;
     using System.Diagnostics;
+    using System.Linq;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;
+    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// MySQL Connector Activity listener. See https://mysqlconnector.net/tutorials/tracing/.
@@ -19,20 +21,24 @@ namespace Jmw.ApplicationInsights.Telemetry
         /// </summary>
         public const string ActivityName = "MySqlConnector";
 
+        private readonly ListenerOptions listenerOptions;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MySQLConnectorListener"/> class.
         /// </summary>
         /// <param name="telemetryClient">Instance of the telemery client.</param>
-        public MySQLConnectorListener(TelemetryClient telemetryClient)
+        /// <param name="listenerOptions">Options for the listener.</param>
+        public MySQLConnectorListener(
+            TelemetryClient telemetryClient,
+            IOptions<ListenerOptions> listenerOptions)
             : base(telemetryClient, s => s.Name == ActivityName)
         {
+            this.listenerOptions = listenerOptions?.Value;
         }
 
         /// <inheritdoc/>
-        protected override void EnrichTelemetry(DependencyTelemetry telemetry, Activity sourceActivity)
+        protected override bool ProcessTelemetry(DependencyTelemetry telemetry, Activity sourceActivity)
         {
-            base.EnrichTelemetry(telemetry, sourceActivity);
-
             string dbName = string.Empty;
             string dbServer = "localhost";
             string dbServerPort = "3306";
@@ -63,6 +69,15 @@ namespace Jmw.ApplicationInsights.Telemetry
             telemetry.Type = "SQL";
             telemetry.Target = $"mysql:{dbServer},{dbServerPort} | {dbName}";
             telemetry.Data = command;
+
+            if (this.listenerOptions != null
+                && this.listenerOptions.IgnoreDatabases != null
+                && this.listenerOptions.IgnoreDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return base.ProcessTelemetry(telemetry, sourceActivity);
         }
     }
 }

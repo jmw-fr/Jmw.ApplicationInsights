@@ -1,5 +1,5 @@
 ﻿// <copyright file="ActivityListener.cs" company="Jean-Marc Weeger">
-// Copyright My Company under MIT Licence. See https://opensource.org/licenses/mit-license.php.
+// Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
 namespace Jmw.ApplicationInsights.Telemetry
@@ -26,7 +26,9 @@ namespace Jmw.ApplicationInsights.Telemetry
         /// </summary>
         /// <param name="telemetryClient">Instance of the telemery client.</param>
         /// <param name="activityFilter">Callback filtering the activity to monitor.</param>
-        public ActivityListener(TelemetryClient telemetryClient, Func<ActivitySource, bool> activityFilter)
+        public ActivityListener(
+            TelemetryClient telemetryClient,
+            Func<ActivitySource, bool> activityFilter)
         {
             this.telemetryClient = Guard.Argument(telemetryClient, nameof(telemetryClient)).NotNull();
             Guard.Argument(activityFilter, nameof(activityFilter)).NotNull();
@@ -53,12 +55,14 @@ namespace Jmw.ApplicationInsights.Telemetry
         }
 
         /// <summary>
-        /// Function allowing to enrich telemetry with custom data.
+        /// Function allowing to filter and enrich telemetry with custom data.
         /// </summary>
         /// <param name="telemetry">Telemetry to enrich.</param>
         /// <param name="sourceActivity">Source activity.</param>
-        protected virtual void EnrichTelemetry(TTelemetry telemetry, Activity sourceActivity)
+        /// <returns><c>true</c> if the telemetry is to be processed or <c>false</c> if it should be filtered.</returns>
+        protected virtual bool ProcessTelemetry(TTelemetry telemetry, Activity sourceActivity)
         {
+            return true;
         }
 
         private static TTelemetry ActivityToTelemetry(Activity activity)
@@ -115,7 +119,10 @@ namespace Jmw.ApplicationInsights.Telemetry
             {
                 var telemetry = ActivityToTelemetry(activity);
 
-                this.EnrichTelemetry(telemetry, activity);
+                if (!this.ProcessTelemetry(telemetry, activity))
+                {
+                    return;
+                }
 
                 if (telemetry is DependencyTelemetry)
                 {

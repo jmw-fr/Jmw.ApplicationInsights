@@ -1,5 +1,5 @@
 ﻿// <copyright file="IActivityListener.cs" company="Jean-Marc Weeger">
-// Copyright My Company under MIT Licence. See https://opensource.org/licenses/mit-license.php.
+// Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
 namespace Jmw.ApplicationInsights.Telemetry

@@ -1,13 +1,10 @@
 ﻿// <copyright file="NpgsqlListener.cs" company="Jean-Marc Weeger">
-// Copyright My Company under MIT Licence. See https://opensource.org/licenses/mit-license.php.
+// Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
 namespace Jmw.ApplicationInsights.Telemetry
 {
-    using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Text;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;
 
@@ -25,16 +22,15 @@ namespace Jmw.ApplicationInsights.Telemetry
         /// Initializes a new instance of the <see cref="NpgsqlListener"/> class.
         /// </summary>
         /// <param name="telemetryClient">Instance of the telemery client.</param>
-        public NpgsqlListener(TelemetryClient telemetryClient)
+        public NpgsqlListener(
+            TelemetryClient telemetryClient)
             : base(telemetryClient, s => s.Name == ActivityName)
         {
         }
 
         /// <inheritdoc/>
-        protected override void EnrichTelemetry(DependencyTelemetry telemetry, Activity sourceActivity)
+        protected override bool ProcessTelemetry(DependencyTelemetry telemetry, Activity sourceActivity)
         {
-            base.EnrichTelemetry(telemetry, sourceActivity);
-
             string dbName = string.Empty;
             string dbServer = "localhost";
             string dbServerPort = "5432";
@@ -65,6 +61,8 @@ namespace Jmw.ApplicationInsights.Telemetry
             telemetry.Type = "SQL";
             telemetry.Target = $"pgsql:{dbServer},{dbServerPort} | {dbName}";
             telemetry.Data = command;
+
+            return base.ProcessTelemetry(telemetry, sourceActivity);
         }
     }
 }
