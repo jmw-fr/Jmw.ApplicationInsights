@@ -128,6 +128,10 @@ namespace Jmw.ApplicationInsights.Telemetry
                 {
                     this.telemetryClient.TrackDependency(telemetry as DependencyTelemetry);
                 }
+                else if (telemetry is RequestTelemetry)
+                {
+                    this.telemetryClient.TrackRequest(telemetry as RequestTelemetry);
+                }
                 else if (telemetry is MetricTelemetry)
                 {
                     this.telemetryClient.TrackMetric(telemetry as MetricTelemetry);
