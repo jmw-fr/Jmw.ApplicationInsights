@@ -9,7 +9,6 @@ namespace Jmw.ApplicationInsights.Telemetry
     using System.Linq;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;
-    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// MySQL Connector Activity listener. See https://mysqlconnector.net/tutorials/tracing/.
@@ -30,10 +29,10 @@ namespace Jmw.ApplicationInsights.Telemetry
         /// <param name="listenerOptions">Options for the listener.</param>
         public MySQLConnectorListener(
             TelemetryClient telemetryClient,
-            IOptions<ListenerOptions> listenerOptions)
+            ListenerOptions listenerOptions = null)
             : base(telemetryClient, s => s.Name == ActivityName)
         {
-            this.listenerOptions = listenerOptions?.Value;
+            this.listenerOptions = listenerOptions;
         }
 
         /// <inheritdoc/>
