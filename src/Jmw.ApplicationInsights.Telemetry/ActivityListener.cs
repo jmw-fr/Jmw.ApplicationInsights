@@ -68,17 +68,19 @@ namespace Jmw.ApplicationInsights.Telemetry
         private static TTelemetry ActivityToTelemetry(Activity activity)
         {
             // From Application Insights code source
-            var telemetry = new TTelemetry();
-            telemetry.Name = activity.OperationName;
-            telemetry.Timestamp = activity.StartTimeUtc;
-            telemetry.Duration = activity.Duration;
+            var telemetry = new TTelemetry
+            {
+                Name = activity.OperationName,
+                Timestamp = activity.StartTimeUtc,
+                Duration = activity.Duration,
+            };
             OperationContext operation = telemetry.Context.Operation;
             operation.Name = activity.OperationName;
             if (activity.IdFormat == ActivityIdFormat.W3C)
             {
                 operation.Id = activity.TraceId.ToHexString();
                 telemetry.Id = activity.SpanId.ToHexString();
-                if (string.IsNullOrEmpty(operation.ParentId) && activity.ParentSpanId != default(ActivitySpanId))
+                if (string.IsNullOrEmpty(operation.ParentId) && activity.ParentSpanId != default)
                 {
                     operation.ParentId = activity.ParentSpanId.ToHexString();
                 }

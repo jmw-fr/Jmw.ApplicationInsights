@@ -28,9 +28,7 @@ namespace Jmw.ApplicationInsights.Telemetry.Processors
         /// <inheritdoc/>
         public void Process(ITelemetry item)
         {
-            var dependencyTelemetry = item as DependencyTelemetry;
-
-            if (dependencyTelemetry != null)
+            if (item is DependencyTelemetry dependencyTelemetry)
             {
                 if (
                     dependencyTelemetry.Context.Operation.ParentId == null
