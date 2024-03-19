@@ -7,6 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
     using System;
     using Dawn;
     using Jmw.ApplicationInsights.Telemetry;
+    using Jmw.ApplicationInsights.Telemetry.ActivityListeners;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

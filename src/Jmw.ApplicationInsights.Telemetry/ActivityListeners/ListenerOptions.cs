@@ -2,7 +2,7 @@
 // Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
-namespace Jmw.ApplicationInsights.Telemetry
+namespace Jmw.ApplicationInsights.Telemetry.ActivityListeners
 {
     /// <summary>
     /// Options for listeners.

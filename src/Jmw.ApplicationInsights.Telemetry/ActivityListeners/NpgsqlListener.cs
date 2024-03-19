@@ -1,38 +1,32 @@
-﻿// <copyright file="MySQLConnectorListener.cs" company="Jean-Marc Weeger">
+﻿// <copyright file="NpgsqlListener.cs" company="Jean-Marc Weeger">
 // Copyright Jean-Marc Weeger under MIT Licence. See https://opensource.org/licenses/mit-license.php.
 // </copyright>
 
-namespace Jmw.ApplicationInsights.Telemetry
+namespace Jmw.ApplicationInsights.Telemetry.ActivityListeners
 {
-    using System;
     using System.Diagnostics;
-    using System.Linq;
+    using Jmw.ApplicationInsights.Telemetry;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;
 
     /// <summary>
-    /// MySQL Connector Activity listener. See https://mysqlconnector.net/tutorials/tracing/.
+    /// Listener for npgsql activity. See https://github.com/npgsql/npgsql/blob/main/src/Npgsql/NpgsqlActivitySource.cs.
     /// </summary>
-    public class MySQLConnectorListener : ActivityListener<DependencyTelemetry>
+    public class NpgsqlListener : ActivityListener<DependencyTelemetry>
     {
         /// <summary>
-        /// MySQLConnector Actity Name.
+        /// Npgsql Activity Source Name.
         /// </summary>
-        public const string ActivityName = "MySqlConnector";
-
-        private readonly ListenerOptions listenerOptions;
+        public const string ActivitySourceName = "Npgsql";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MySQLConnectorListener"/> class.
+        /// Initializes a new instance of the <see cref="NpgsqlListener"/> class.
         /// </summary>
         /// <param name="telemetryClient">Instance of the telemery client.</param>
-        /// <param name="listenerOptions">Options for the listener.</param>
-        public MySQLConnectorListener(
-            TelemetryClient telemetryClient,
-            ListenerOptions listenerOptions = null)
-            : base(telemetryClient, s => s.Name == ActivityName)
+        public NpgsqlListener(
+            TelemetryClient telemetryClient)
+            : base(telemetryClient, s => s.Name == ActivitySourceName)
         {
-            this.listenerOptions = listenerOptions;
         }
 
         /// <inheritdoc/>
@@ -40,7 +34,7 @@ namespace Jmw.ApplicationInsights.Telemetry
         {
             string dbName = string.Empty;
             string dbServer = "localhost";
-            string dbServerPort = "3306";
+            string dbServerPort = "5432";
             string command = sourceActivity.OperationName;
 
             foreach (var baggage in sourceActivity.Tags)
@@ -66,24 +60,8 @@ namespace Jmw.ApplicationInsights.Telemetry
             }
 
             telemetry.Type = "SQL";
-            telemetry.Target = $"mysql:{dbServer},{dbServerPort} | {dbName}";
+            telemetry.Target = $"pgsql:{dbServer},{dbServerPort} | {dbName}";
             telemetry.Data = command;
-
-            if (this.listenerOptions != null)
-            {
-                if (this.listenerOptions.MonitorDatabases != null
-                    && this.listenerOptions.MonitorDatabases.Length > 0
-                    && !this.listenerOptions.MonitorDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-
-                if (this.listenerOptions.IgnoreDatabases != null
-                    && this.listenerOptions.IgnoreDatabases.Contains(dbName, StringComparer.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
 
             return base.ProcessTelemetry(telemetry, sourceActivity);
         }
