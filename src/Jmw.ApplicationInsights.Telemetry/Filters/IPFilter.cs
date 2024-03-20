@@ -6,8 +6,6 @@ namespace Jmw.ApplicationInsights.Telemetry.Filters
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
     using System.Text.RegularExpressions;
     using Dawn;
     using Microsoft.ApplicationInsights.Channel;
@@ -59,9 +57,7 @@ namespace Jmw.ApplicationInsights.Telemetry.Filters
 
         private static bool EvalShouldMonitor(IEnumerable<Regex> includeIPs)
         {
-            var ips = Dns.GetHostEntry(Dns.GetHostName())
-                                    .AddressList.Where(a => a.AddressFamily == AddressFamily.InterNetwork)
-                                    .Select(ip => ip.ToString());
+            var ips = Helpers.IPHelpers.GetIPv4Addresses().Select(ip => ip.ToString());
 
             return ips.Any(ip => includeIPs.Any(p => p.IsMatch(ip)));
         }

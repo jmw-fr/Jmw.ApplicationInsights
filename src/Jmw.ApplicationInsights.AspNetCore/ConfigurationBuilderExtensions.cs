@@ -7,7 +7,6 @@ namespace Microsoft.AspNetCore.Builder
     using System.Diagnostics;
     using Dawn;
     using Jmw.ApplicationInsights.Telemetry;
-    using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
