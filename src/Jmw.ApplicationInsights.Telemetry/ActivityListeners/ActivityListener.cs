@@ -73,7 +73,9 @@ namespace Jmw.ApplicationInsights.Telemetry
                 Name = activity.OperationName,
                 Timestamp = activity.StartTimeUtc,
                 Duration = activity.Duration,
+                Success = activity.Status == ActivityStatusCode.Ok,
             };
+
             OperationContext operation = telemetry.Context.Operation;
             operation.Name = activity.OperationName;
             if (activity.IdFormat == ActivityIdFormat.W3C)
