@@ -73,8 +73,19 @@ namespace Jmw.ApplicationInsights.Telemetry
                 Name = activity.OperationName,
                 Timestamp = activity.StartTimeUtc,
                 Duration = activity.Duration,
-                Success = activity.Status == ActivityStatusCode.Ok,
+                Success = activity.Status != ActivityStatusCode.Error,
             };
+
+            if (activity.Status == ActivityStatusCode.Error && !string.IsNullOrEmpty(activity.StatusDescription))
+            {
+                telemetry.Properties.Add(nameof(activity.StatusDescription), activity.StatusDescription);
+            }
+
+            if (telemetry is RequestTelemetry requestTelemetry)
+            {
+                requestTelemetry.ResponseCode = activity.Status != ActivityStatusCode.Error
+                    ? "200" : string.IsNullOrEmpty(activity.StatusDescription) ? "500" : activity.StatusDescription;
+            }
 
             OperationContext operation = telemetry.Context.Operation;
             operation.Name = activity.OperationName;

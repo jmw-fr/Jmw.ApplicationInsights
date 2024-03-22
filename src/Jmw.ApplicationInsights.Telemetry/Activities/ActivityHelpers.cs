@@ -23,7 +23,7 @@ namespace Jmw.ApplicationInsights.Telemetry.Activities
             Guard.Argument(activity).NotNull();
             Guard.Argument(exception).NotNull();
 
-            activity.SetStatus(ActivityStatusCode.Error, exception.Message);
+            activity.SetStatus(ActivityStatusCode.Error, exception.GetType().Name);
         }
     }
 }
